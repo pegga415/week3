@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/reset.css">
+	<title>Assignment - Week 1</title>
+</head>
+<body>
+	<div class="wrapper">
+		<div class="main-bg"></div>
+		<!-- Star Footer -->
+		<footer>
+			<div class="title">My Web</div>
+			<div class="menu">
+				<ul>
+					<li>Item 1</li>
+					<li>Item 2</li>
+					<li>Item 3</li>
+					<li>Item 4</li>
+				</ul>
+				<div class="menuIcon" style="background-image: url('images/menu.png');"></div>
+			</div>
+		</footer>
+		<!-- End Footer -->
+		<!-- Star Greeting -->
+		<div class="greeting">Welcome to MyHome</div>
+		<!-- End Greeting -->
+		<!-- Start Content -->
+		<div class="content" id="content"></div>
+		<!-- End Content -->
+		<button class="btn" onclick="loadMore();">Load More</button>
+	</div>
+
+	<!-- JavaScript -->
+	<script type = text/javascript >
+		var dataset = [];
+		const xml = new XMLHttpRequest();
+		xml.open('get','https://padax.github.io/taipei-day-trip-resources/taipei-attractions.json',true);
+		xml.send();
+		xml.onreadystatechange = function(){
+			if(xml.readyState == 4 && xml.status == 200){
+				dataset = JSON.parse(xml.responseText).result.results;
+				
+				//apend imgBox
+				for(let i=0; i<8; i++){
+					var newImgBox = document.createElement('div');
+					newImgBox.className = 'imgBox';
+					document.getElementById('content').appendChild(newImgBox);
+				};
+				//apend img  text
+				const imgBoxs = document.getElementsByClassName('imgBox');
+				for(let i=0; i<imgBoxs.length; i++){
+					//解析圖片網址
+					let imgUrl = '';
+					for(let j=0; j<dataset[i].file.length; j++){
+						imgUrl += dataset[i].file[j];
+						let lastWord = dataset[i].file[j+1] + dataset[i].file[j+2] + dataset[i].file[j+3] + dataset[i].file[j+4];
+						if(lastWord == 'http'){
+							break
+						}else if(j+1 == dataset[i].file.length){
+							break
+						};
+					};
+
+
+					var newImg = document.createElement('div');
+					var newText = document.createElement('div');
+					var newTextContent = document.createTextNode(dataset[i].stitle);
+					newImg.className = 'img';
+					newImg.style.backgroundImage = "url("+imgUrl+")";
+					newText.className = 'text';
+					newText.appendChild(newTextContent);
+					imgBoxs[i].appendChild(newImg);
+					imgBoxs[i].appendChild(newText);
+				};
+
+
+			};
+		};
+		var n =0;
+		function loadMore(){
+			n += 8;
+			//apend imgBox
+			for(let i=0; i<8; i++){
+					var newImgBox = document.createElement('div');
+					newImgBox.className = 'imgBox';
+					document.getElementById('content').appendChild(newImgBox);
+				};
+				//apend img  text
+				const imgBoxs = document.getElementsByClassName('imgBox');
+				for(let i=0; i<imgBoxs.length-n; i++){
+					//解析圖片網址
+					let imgUrl = '';
+					for(let j=0; j<dataset[i+n].file.length; j++){
+						imgUrl += dataset[i+n].file[j];
+						let lastWord = dataset[i+n].file[j+1] + dataset[i+n].file[j+2] + dataset[i+n].file[j+3] + dataset[i+n].file[j+4];
+						if(lastWord == 'http'){
+							break
+						}else if(j+1 == dataset[i+n].file.length){
+							break
+						};
+					};
+
+					let newImg = document.createElement('div');
+					let newText = document.createElement('div');
+					let newTextContent = document.createTextNode(dataset[i+n].stitle);
+					newImg.className = 'img';
+					newImg.style.backgroundImage = "url("+imgUrl+")";
+					newText.className = 'text';
+					newText.appendChild(newTextContent);
+					imgBoxs[i+n].appendChild(newImg);
+					imgBoxs[i+n].appendChild(newText);
+				};
+		};
+
+	</script>
+</body>
+</html>
